@@ -18,14 +18,17 @@ export class User extends BaseEntity{
     @Column()
     last_name: string;
 
-    @Column()
-    password: string
+    @Column({type: 'bytea'})
+    password: Buffer
 
     @CreateDateColumn()
     created_at: Date;
 
     @UpdateDateColumn()
     updated_at: Date;
+
+    @Column({type: "bytea"})
+    salt: Buffer
 
     @OneToMany(() => Playlist, (playlist) => playlist.user)
     playlists: Playlist[]

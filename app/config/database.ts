@@ -1,12 +1,21 @@
 import { DataSource } from "typeorm";
+import { User } from "../entities/User";
+import { Playlist } from "../entities/Playlist";
+import { Music } from "../entities/Music";
 
 const AppDataSource = new DataSource({
+    synchronize: true,
+    entities: [
+        User,
+        Playlist,
+        Music
+    ],
     type: "postgres",
-    host: "localhost",
+    host: "127.0.0.1",
     port: 5432,
-    username: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: "spleen",
+    username: 'root',
+    password: 'brutus123',
+    database: "spleen-afx",
 })
 
 export default AppDataSource;

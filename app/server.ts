@@ -1,10 +1,26 @@
-import express from 'express';
-import AppDataSource from 'config/database';
+import express, {Express} from 'express';
+import session from 'express-session';
+import AppDataSource from './config/database';
 import PlaylistRoutes from  './routes/Playlist';
 import UserRoutes from './routes/User';
 
-const app = express();
+const app: Express = express();
 const port = 3000;
+
+app.use(
+    session({
+        secret: 'some_secret',
+        resave: false,
+        cookie: { 
+            maxAge: 1000 * 60 * 60 * 24,
+            httpOnly: true
+        },
+        saveUninitialized: false
+    })
+);
+
+app.use(express.json);
+
 
 const startServer = async() =>{
     AppDataSource.initialize()
@@ -15,9 +31,9 @@ const startServer = async() =>{
             console.error("Error during Data Source initialization", err)
         })
 
-    app.get('/', (req, res) => {
+    /* app.get('/', (req, res) => {
         res.send('Hello, TypeScript with Express!');
-    });
+    }); */
     
     app.use(express.json());
 
