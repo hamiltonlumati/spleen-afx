@@ -1,70 +1,10 @@
 import express, {Express, Request, Response} from 'express';
 import { User } from '../entities/User';
 import AppDataSource from '../config/database';
-import session from 'express-session';
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
 import * as crypto from "crypto";
+
 const app: Express = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // For parsing form data
-
-app.use(
-    session({
-        secret: 'some_secret',
-        resave: false,
-        cookie: { 
-            maxAge: 1000 * 60 * 60 * 24,
-            httpOnly: true
-        },
-        saveUninitialized: false
-    })
-);
-
-app.use(express.json);
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.use(
-    new LocalStrategy((email: string, password, callback ) => {
-        const user: any =  AppDataSource.getRepository(User).find({
-            where: {
-                email: email,
-            },
-        });
-        if (!user) {
-            return callback(null, false, { message: 'Incorrect username or password.' });
-        }
-
-        crypto.pbkdf2(password, user.salt, 310000, 32, 'sha256', function(err, password) {
-            if (err) { return callback(err); }
-            if (!crypto.timingSafeEqual(user.password, password)) {
-                return callback(null, false, { message: 'Incorrect username or password.' });
-            }
-            return callback(null, user);
-        });
-    })
-);  
-
-// Serialize user
-passport.serializeUser((user: any, done) => {
-    done(null, user.id);
-});
-
-// Deserialize user
-passport.deserializeUser((id: number, done) => {
-    const user =  AppDataSource.getRepository(User).find({
-        where: {
-            id: id,
-        },
-    });
-    if (user) {
-        done(null, user);
-    } else {
-        done(null, false);
-    }
-});
-
 const router = express();
 
 app.post('/register', (req: Request, res: Response, next) => {

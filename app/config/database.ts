@@ -2,13 +2,15 @@ import { DataSource } from "typeorm";
 import { User } from "../entities/User";
 import { Playlist } from "../entities/Playlist";
 import { Music } from "../entities/Music";
+import { Session } from "../entities/Session";
 
 const AppDataSource = new DataSource({
     synchronize: true,
     entities: [
         User,
         Playlist,
-        Music
+        Music,
+        Session
     ],
     type: "postgres",
     host: "127.0.0.1",
